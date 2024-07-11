@@ -117,13 +117,3 @@ compile_commands.json
 # VIA(L) files that don't belong in QMK repo
 via*.json
 /keyboards/**/keymaps/vial/*
-
-# ZSA Specific ignores
-/docs/**
-/users/**
-/layouts/community/**
-/keyboards/**
-!/keyboards/zsa/
-!/keyboards/zsa/**
-/keyboards/zsa/**/keymaps/**
-!/keyboards/zsa/**/keymaps/default
