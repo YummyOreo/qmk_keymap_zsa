@@ -1,5 +1,5 @@
 #include "space_dash.h"
-#include <string.h>
+#include <complex.h>
 
 static bool space_dash_status = false;
 
@@ -8,9 +8,23 @@ bool process_space_dash(uint16_t keycode, keyrecord_t *record) {
         return true;
     }
 
-    if (keycode == KC_SPACE && record->event.pressed) {
-            SEND_STRING("-");
-            return false;
+    switch (keycode) {
+        case KC_SPACE:
+            if (record->event.pressed) {
+                if (keyboard_report->mods & MOD_BIT(KC_LSFT) || keyboard_report->mods & MOD_BIT(KC_RSFT)) {
+                    SEND_STRING("_");
+                    return false;
+                } else {
+                    SEND_STRING("-");
+                    return false;
+                }
+                return false;
+            }
+        case KC_ESCAPE:
+            if (record->event.pressed) {
+                turn_space_dash_off();
+                return true;
+            }
     }
     return true;
 }
