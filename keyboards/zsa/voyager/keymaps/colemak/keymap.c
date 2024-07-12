@@ -124,10 +124,10 @@ void leader_end_user(void) {
           STATUS_LED_1(false);
           STATUS_LED_2(false);
     } else if (leader_sequence_three_keys(KC_LEFT_SHIFT, KC_O, KC_Q)) {
-        SEND_STRING("OI- \"\"");
+        SEND_STRING("O- \"\"");
         tap_code16(KC_LEFT);
     } else if (leader_sequence_two_keys(KC_O, KC_Q)) {
-        SEND_STRING("oI- \"\"");
+        SEND_STRING("o- \"\"");
         tap_code16(KC_LEFT);
     } else if (leader_sequence_one_key(KC_Q)) {
         SEND_STRING("I- \"\"");
