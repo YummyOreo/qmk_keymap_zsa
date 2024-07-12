@@ -123,9 +123,26 @@ void leader_end_user(void) {
           sentence_case_off();
           STATUS_LED_1(false);
           STATUS_LED_2(false);
+    } else if (leader_sequence_three_keys(KC_LEFT_SHIFT, KC_O, KC_Q)) {
+        SEND_STRING("OI- \"\"");
+        tap_code16(KC_LEFT);
+    } else if (leader_sequence_two_keys(KC_O, KC_Q)) {
+        SEND_STRING("oI- \"\"");
+        tap_code16(KC_LEFT);
     } else if (leader_sequence_one_key(KC_Q)) {
         SEND_STRING("I- \"\"");
         tap_code16(KC_LEFT);
+    } else if (leader_sequence_one_key(KC_LEFT_SHIFT)) {
+        sentence_case_toggle();
+        STATUS_LED_2(is_sentence_case_on());
+    }
+}
+
+void caps_word_set_user(bool active) {
+    if (active) {
+        STATUS_LED_3(true);
+    } else {
+        STATUS_LED_3(false);
     }
 }
 
@@ -229,5 +246,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
+void suspend_power_down_user(void) {
+          STATUS_LED_1(false);
+          STATUS_LED_2(false);
+          STATUS_LED_3(false);
+          STATUS_LED_4(false);
+}
 
-
+void suspend_wakeup_init_user(void) {
+    STATUS_LED_1(autocorrect_is_enabled());
+    STATUS_LED_2(is_sentence_case_on());
+    STATUS_LED_3(is_caps_word_on());
+    layer_move(BASE);
+}
+bool shutdown_user(bool jump_to_bootloader) {
+          STATUS_LED_1(false);
+          STATUS_LED_2(false);
+          STATUS_LED_3(false);
+          STATUS_LED_4(false);
+          layer_move(BASE);
+    // false to not process kb level
+    return false;
+}

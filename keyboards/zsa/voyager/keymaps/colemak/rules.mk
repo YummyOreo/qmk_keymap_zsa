@@ -11,3 +11,5 @@ AUTOCORRECT_ENABLE = yes
 SRC += features/sentence_case.c
 LTO_ENABLE = yes
 LEADER_ENABLE = yes
+# TAP_DANCE_ENABLE = yes
+CAPS_WORD_ENABLE = yes
