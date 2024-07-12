@@ -3,6 +3,13 @@
   See config.h options at https://docs.qmk.fm/#/config_options?id=the-configh-file
 */
 
+#ifndef NO_DEBUG
+#define NO_DEBUG
+#endif // !NO_DEBUG
+#if !defined(NO_PRINT) && !defined(CONSOLE_ENABLE)
+#define NO_PRINT
+#endif // !NO_PRINT
+
 #define USB_SUSPEND_WAKEUP_DELAY 0
 #define SERIAL_NUMBER "M45AX/5mWon"
 #define LAYER_STATE_16BIT
