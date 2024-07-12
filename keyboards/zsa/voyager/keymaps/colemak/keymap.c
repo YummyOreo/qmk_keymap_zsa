@@ -1,10 +1,27 @@
 #include QMK_KEYBOARD_H
 #include "version.h"
 #include "features/sentence_case.h"
+#include "features/space_dash.h"
 #define MOON_LED_LEVEL LED_LEVEL
 #define ML_SAFE_RANGE SAFE_RANGE
+#include <stdbool.h>
 
-enum custom_keycodes { RGB_SLD = ML_SAFE_RANGE, EXIT_GAME };
+// clang-format off
+enum custom_keycodes {
+    RGB_SLD = ML_SAFE_RANGE,
+    EXIT_GAME,
+    TOGGLE_SPACE_DASH,
+};
+
+#define OBSIDIAN_TEMPLATE MEH(KC_T)
+#define OBSIDIAN_NEW_NOTE MEH(KC_N)
+#define OBSIDIAN_NEW_NOTE_SELECTED MEH(KC_S)
+#define OBSIDIAN_LIT_NOTE MEH(KC_L)
+
+#define OBSIDIAN_QUICKADD MEH(KC_A)
+#define OBSIDIAN_CALLOUT MEH(KC_C)
+#define OBSIDIAN_MODE_SWAP MEH(KC_G)
+#define OBSIDIAN_ADVANCED_TABLES MEH(KC_F)
 
 enum layers { BASE, LOWER, RAISED, MOVEMENT, OBSIDIAN, GAME, NUMPAD, QWERTY };
 
@@ -44,9 +61,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   // Obsidian
   [OBSIDIAN] = LAYOUT_voyager(
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(LSFT(KC_N)),KC_TRANSPARENT,                                 KC_TRANSPARENT, LALT(LCTL(KC_N)),KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, LALT(LCTL(KC_H)),LALT(LCTL(KC_E)),LALT(LCTL(KC_T)),LALT(KC_N),     LALT(KC_G),                                     LALT(KC_A),     LALT(KC_C),     LALT(LCTL(KC_Z)),LALT(LSFT(KC_C)),LALT(LSFT(KC_F)),LALT(KC_S),
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, LALT(LCTL(KC_C)),KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, OBSIDIAN_NEW_NOTE_SELECTED,KC_TRANSPARENT,                                 KC_TRANSPARENT, OBSIDIAN_MODE_SWAP,KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, OBSIDIAN_LIT_NOTE, OBSIDIAN_NEW_NOTE, OBSIDIAN_TEMPLATE,                                     OBSIDIAN_QUICKADD, OBSIDIAN_CALLOUT, OBSIDIAN_ADVANCED_TABLES,KC_TRANSPARENT,KC_TRANSPARENT,KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, TOGGLE_SPACE_DASH,KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
@@ -76,6 +93,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
+void enter_game(void) {
+    layer_move(GAME);
+    autocorrect_disable();
+    sentence_case_off();
+    turn_space_dash_off();
+    STATUS_LED_1(false);
+    STATUS_LED_2(false);
+}
+
+void exit_game(void) {
+    autocorrect_enable();
+    sentence_case_on();
+    STATUS_LED_1(true);
+    STATUS_LED_2(true);
+    layer_move(BASE);
+}
+
 enum complex_combos {
     ENTER_GAME = 2,
     TOGGLE_AUTOCORRECT = 3,
@@ -103,11 +137,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
       break;
     case ENTER_GAME:
       if (pressed) {
-          layer_move(GAME);
-          autocorrect_disable();
-          sentence_case_off();
-          STATUS_LED_1(false);
-          STATUS_LED_2(false);
+          enter_game();
       }
       break;
   }
@@ -118,11 +148,7 @@ void leader_end_user(void) {
           autocorrect_toggle();
           STATUS_LED_1(autocorrect_is_enabled());
     } else if (leader_sequence_one_key(KC_G)) {
-          layer_move(GAME);
-          autocorrect_disable();
-          sentence_case_off();
-          STATUS_LED_1(false);
-          STATUS_LED_2(false);
+        enter_game();
     } else if (leader_sequence_three_keys(KC_LEFT_SHIFT, KC_O, KC_Q)) {
         SEND_STRING("O- \"\"");
         tap_code16(KC_LEFT);
@@ -164,7 +190,7 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
 
     [MOVEMENT] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
-    [OBSIDIAN] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
+    [OBSIDIAN] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
     [GAME] = { {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255} },
 
@@ -224,26 +250,35 @@ bool rgb_matrix_indicators_user(void) {
   return true;
 }
 
+void space_dash_change_status(bool status) {
+    if (status) {
+        STATUS_LED_4(true);
+    } else {
+        STATUS_LED_4(false);
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_sentence_case(keycode, record)) { return false; }
-  switch (keycode) {
+    if (!process_space_dash(keycode, record)) { return false; }
 
-    case RGB_SLD:
-      if (record->event.pressed) {
-        rgblight_mode(1);
-      }
-      return false;
-    case EXIT_GAME:
-      if (record->event.pressed) {
-          autocorrect_enable();
-          sentence_case_on();
-          STATUS_LED_1(true);
-          STATUS_LED_2(true);
-          layer_move(BASE);
-      }
-      return false;
-  }
-  return true;
+    switch (keycode) {
+        case RGB_SLD:
+            if (record->event.pressed) {
+                rgblight_mode(1);
+            }
+            return false;
+        case EXIT_GAME:
+            if (record->event.pressed) {
+                exit_game();
+            }
+            return false;
+        case TOGGLE_SPACE_DASH:
+            if (record->event.pressed) {
+                toggle_space_dash();
+            }
+        }
+    return true;
 }
 
 void suspend_power_down_user(void) {
@@ -257,6 +292,7 @@ void suspend_wakeup_init_user(void) {
     STATUS_LED_1(autocorrect_is_enabled());
     STATUS_LED_2(is_sentence_case_on());
     STATUS_LED_3(is_caps_word_on());
+    STATUS_LED_4(get_space_dash_status());
     layer_move(BASE);
 }
 bool shutdown_user(bool jump_to_bootloader) {

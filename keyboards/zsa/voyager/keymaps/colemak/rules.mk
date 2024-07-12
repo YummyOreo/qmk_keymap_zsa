@@ -9,6 +9,7 @@ SPACE_CADET_ENABLE = no
 COMBO_ENABLE = yes
 AUTOCORRECT_ENABLE = yes
 SRC += features/sentence_case.c
+SRC += features/space_dash.c
 LTO_ENABLE = yes
 LEADER_ENABLE = yes
 # TAP_DANCE_ENABLE = yes
