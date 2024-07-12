@@ -161,6 +161,8 @@ void leader_end_user(void) {
     } else if (leader_sequence_one_key(KC_LEFT_SHIFT)) {
         sentence_case_toggle();
         STATUS_LED_2(is_sentence_case_on());
+    } else if (leader_sequence_one_key(KC_D)) {
+        toggle_space_dash();
     }
 }
 
