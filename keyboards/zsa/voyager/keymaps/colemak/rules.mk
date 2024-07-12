@@ -10,3 +10,4 @@ COMBO_ENABLE = yes
 AUTOCORRECT_ENABLE = yes
 SRC += features/sentence_case.c
 LTO_ENABLE = yes
+LEADER_ENABLE = yes

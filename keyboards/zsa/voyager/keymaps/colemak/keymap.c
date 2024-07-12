@@ -4,10 +4,7 @@
 #define MOON_LED_LEVEL LED_LEVEL
 #define ML_SAFE_RANGE SAFE_RANGE
 
-enum custom_keycodes {
-    RGB_SLD = ML_SAFE_RANGE,
-    EXIT_GAME,
-};
+enum custom_keycodes { RGB_SLD = ML_SAFE_RANGE, EXIT_GAME };
 
 enum layers { BASE, LOWER, RAISED, MOVEMENT, OBSIDIAN, GAME, NUMPAD, QWERTY };
 
@@ -18,8 +15,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,         KC_Q,           KC_W,           KC_F,           KC_P,           KC_B,                                           KC_J,           KC_L,           KC_U,           KC_Y,           KC_SCLN,        KC_BSPC,
     KC_ESCAPE,      KC_A,           KC_R,           KC_S,           KC_T,           KC_G,                                           KC_M,           KC_N,           KC_E,           KC_I,           KC_O,           KC_ENTER,
     KC_LEFT_SHIFT,  KC_Z,           KC_X,           KC_C,           KC_D,           KC_V,                                           KC_K,           KC_H,           KC_COMMA,       KC_DOT,         KC_SLASH,       MT(MOD_RSFT, KC_QUOTE),
-    KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    KC_TRANSPARENT, KC_LEFT_ALT,    KC_LEFT_CTRL,                                   KC_RIGHT_CTRL,  KC_RIGHT_ALT,   KC_LEFT,        KC_UP,          KC_DOWN,        KC_RIGHT,
-                                                    MO(LOWER),          KC_SPACE,                                       LT(MOVEMENT,KC_BSPC),  MO(RAISED)
+    KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    KC_TRANSPARENT, KC_LEFT_ALT,    QK_LEAD,                                   KC_RIGHT_CTRL,  QK_LEAD,   KC_LEFT,        KC_UP,          KC_DOWN,        KC_RIGHT,
+                                                    MO(LOWER),          KC_SPACE,                                       LT(MOVEMENT, KC_BSPC),  MO(RAISED)
   ),
   // Lower
   [LOWER] = LAYOUT_voyager(
@@ -116,6 +113,22 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
   }
 }
 
+void leader_end_user(void) {
+    if (leader_sequence_one_key(KC_A)) {
+          autocorrect_toggle();
+          STATUS_LED_1(autocorrect_is_enabled());
+    } else if (leader_sequence_one_key(KC_G)) {
+          layer_move(GAME);
+          autocorrect_disable();
+          sentence_case_off();
+          STATUS_LED_1(false);
+          STATUS_LED_2(false);
+    } else if (leader_sequence_one_key(KC_Q)) {
+        SEND_STRING("I- \"\"");
+        tap_code16(KC_LEFT);
+    }
+}
+
 extern rgb_config_t rgb_matrix_config;
 
 void keyboard_post_init_user(void) {
@@ -192,15 +205,6 @@ bool rgb_matrix_indicators_user(void) {
     break;
   }
   return true;
-}
-
-bool sentence_case_check_ending(const uint16_t* buffer) {
-  // Don't consider the abbreviations "vs." and "etc." to end the sentence.
-  if (SENTENCE_CASE_JUST_TYPED(KC_SPC, KC_V, KC_S, KC_DOT) ||
-      SENTENCE_CASE_JUST_TYPED(KC_SPC, KC_E, KC_T, KC_C, KC_DOT)) {
-    return false;  // Not a real sentence ending.
-  }
-  return true;  // Real sentence ending; capitalize next letter.
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
