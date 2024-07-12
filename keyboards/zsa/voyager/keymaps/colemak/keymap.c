@@ -5,21 +5,13 @@
 #define ML_SAFE_RANGE SAFE_RANGE
 
 enum custom_keycodes {
-  RGB_SLD = ML_SAFE_RANGE,
-  EXIT_GAME,
+    RGB_SLD = ML_SAFE_RANGE,
+    EXIT_GAME,
 };
 
-enum layers {
-    BASE,
-    LOWER,
-    RAISED,
-    MOVEMENT,
-    OBSIDIAN,
-    GAME,
-    NUMPAD,
-    QWERTY
-};
+enum layers { BASE, LOWER, RAISED, MOVEMENT, OBSIDIAN, GAME, NUMPAD, QWERTY };
 
+// clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // main
   [BASE] = LAYOUT_voyager(
@@ -116,7 +108,9 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
       if (pressed) {
           layer_move(GAME);
           autocorrect_disable();
+          sentence_case_off();
           STATUS_LED_1(false);
+          STATUS_LED_2(false);
       }
       break;
   }
@@ -127,8 +121,10 @@ extern rgb_config_t rgb_matrix_config;
 void keyboard_post_init_user(void) {
   rgb_matrix_enable();
   STATUS_LED_1(true);
+  STATUS_LED_2(true);
 }
 
+// clang-format off
 const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
     [BASE] = { {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201}, {20,255,201} },
 
@@ -199,10 +195,6 @@ bool rgb_matrix_indicators_user(void) {
 }
 
 bool sentence_case_check_ending(const uint16_t* buffer) {
-    uint8_t current_layer = get_highest_layer(layer_state);
-    if (current_layer == GAME) {
-        return false;
-    }
   // Don't consider the abbreviations "vs." and "etc." to end the sentence.
   if (SENTENCE_CASE_JUST_TYPED(KC_SPC, KC_V, KC_S, KC_DOT) ||
       SENTENCE_CASE_JUST_TYPED(KC_SPC, KC_E, KC_T, KC_C, KC_DOT)) {
@@ -223,7 +215,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case EXIT_GAME:
       if (record->event.pressed) {
           autocorrect_enable();
+          sentence_case_on();
           STATUS_LED_1(true);
+          STATUS_LED_2(true);
           layer_move(BASE);
       }
       return false;
