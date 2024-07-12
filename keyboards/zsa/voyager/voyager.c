@@ -41,31 +41,31 @@ static uint32_t startup_exec(uint32_t trigger_time, void *cb_arg) {
 
     switch (startup_loop++) {
         case 0:
-            STATUS_LED_1(true);
-            STATUS_LED_2(false);
-            STATUS_LED_3(false);
-            STATUS_LED_4(false);
+            // STATUS_LED_1(true);
+            // STATUS_LED_2(false);
+            // STATUS_LED_3(false);
+            // STATUS_LED_4(false);
             break;
         case 1:
-            STATUS_LED_2(true);
+            // STATUS_LED_2(true);
             break;
         case 2:
-            STATUS_LED_3(true);
+            // STATUS_LED_3(true);
             break;
         case 3:
-            STATUS_LED_4(true);
+            // STATUS_LED_4(true);
             break;
         case 4:
-            STATUS_LED_1(false);
+            // STATUS_LED_1(false);
             break;
         case 5:
-            STATUS_LED_2(false);
+            // STATUS_LED_2(false);
             break;
         case 6:
-            STATUS_LED_3(false);
+            // STATUS_LED_3(false);
             break;
         case 7:
-            STATUS_LED_4(false);
+            // STATUS_LED_4(false);
             break;
         case 8:
             is_launching = false;
