@@ -101,6 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 TO(BASE),       KC_TRANSPARENT
   ),
 };
+// clang-format on
 
 void enter_game(void) {
     layer_move(GAME);
@@ -121,42 +122,41 @@ void exit_game(void) {
 
 enum complex_combos {
     ENTER_GAME = 2,
-    TOGGLE_AUTOCORRECT = 3,
+    TOGGLE_AUTOCORRECT,
 };
 
-const uint16_t PROGMEM obsidian_combo[] = { KC_SPACE, LT(MOVEMENT, KC_BSPC), COMBO_END};
-const uint16_t PROGMEM game_enter_combo[] = { KC_BSPC, KC_ENTER, COMBO_END};
-const uint16_t PROGMEM qwerty_enter_combo[] = { MT(MOD_RSFT, KC_QUOTE), KC_BSPC, COMBO_END};
-const uint16_t PROGMEM toggle_autocorrect_combo[] = { KC_BACKSPACE, KC_RIGHT, COMBO_END };
-
+const uint16_t PROGMEM obsidian_combo[]           = {KC_SPACE, LT(MOVEMENT, KC_BSPC), COMBO_END};
+const uint16_t PROGMEM game_enter_combo[]         = {KC_BSPC, KC_ENTER, COMBO_END};
+const uint16_t PROGMEM qwerty_enter_combo[]       = {MT(MOD_RSFT, KC_QUOTE), KC_BSPC, COMBO_END};
+const uint16_t PROGMEM toggle_autocorrect_combo[] = {KC_BACKSPACE, KC_RIGHT, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(obsidian_combo, OSL(OBSIDIAN)),
     COMBO(qwerty_enter_combo, TO(QWERTY)),
-    [ENTER_GAME] = COMBO_ACTION(game_enter_combo),
+    [ENTER_GAME]         = COMBO_ACTION(game_enter_combo),
     [TOGGLE_AUTOCORRECT] = COMBO_ACTION(toggle_autocorrect_combo),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
-  switch(combo_index) {
-    case TOGGLE_AUTOCORRECT:
-      if (pressed) {
-          autocorrect_toggle();
-          STATUS_LED_1(autocorrect_is_enabled());
-      }
-      break;
-    case ENTER_GAME:
-      if (pressed) {
-          enter_game();
-      }
-      break;
-  }
+    switch (combo_index) {
+        case TOGGLE_AUTOCORRECT:
+            if (pressed) {
+                autocorrect_toggle();
+                STATUS_LED_1(autocorrect_is_enabled());
+            }
+            break;
+        case ENTER_GAME:
+            if (pressed) {
+                enter_game();
+            }
+            break;
+    }
 }
 
 void leader_end_user(void) {
     if (leader_sequence_one_key(KC_A)) {
-          autocorrect_toggle();
-          STATUS_LED_1(autocorrect_is_enabled());
+        autocorrect_toggle();
+        STATUS_LED_1(autocorrect_is_enabled());
     } else if (leader_sequence_one_key(KC_G)) {
         enter_game();
     } else if (leader_sequence_two_keys(KC_LEFT_SHIFT, KC_Q)) {
@@ -186,9 +186,9 @@ void caps_word_set_user(bool active) {
 extern rgb_config_t rgb_matrix_config;
 
 void keyboard_post_init_user(void) {
-  rgb_matrix_enable();
-  STATUS_LED_1(true);
-  STATUS_LED_2(true);
+    rgb_matrix_enable();
+    STATUS_LED_1(true);
+    STATUS_LED_2(true);
 }
 
 // clang-format off
@@ -207,62 +207,45 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
 
     [NUMPAD] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
     [MOUSE] = { {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {252,3,244}, {0,0,0} },
-
 };
+// clang-format on
 
 void set_layer_color(int layer) {
-  for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
-    HSV hsv = {
-      .h = pgm_read_byte(&ledmap[layer][i][0]),
-      .s = pgm_read_byte(&ledmap[layer][i][1]),
-      .v = pgm_read_byte(&ledmap[layer][i][2]),
-    };
-    if (!hsv.h && !hsv.s && !hsv.v) {
-        rgb_matrix_set_color( i, 0, 0, 0 );
-    } else {
-        RGB rgb = hsv_to_rgb( hsv );
-        float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
-        rgb_matrix_set_color( i, f * rgb.r, f * rgb.g, f * rgb.b );
+    for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+        HSV hsv = {
+            .h = pgm_read_byte(&ledmap[layer][i][0]),
+            .s = pgm_read_byte(&ledmap[layer][i][1]),
+            .v = pgm_read_byte(&ledmap[layer][i][2]),
+        };
+        if (!hsv.h && !hsv.s && !hsv.v) {
+            rgb_matrix_set_color(i, 0, 0, 0);
+        } else {
+            RGB   rgb = hsv_to_rgb(hsv);
+            float f   = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
+            rgb_matrix_set_color(i, f * rgb.r, f * rgb.g, f * rgb.b);
+        }
     }
-  }
 }
 
 bool rgb_matrix_indicators_user(void) {
-  // if (rawhid_state.rgb_control) {
-  //     return false;
-  // }
-  if (keyboard_config.disable_layer_led) { return false; }
-  switch (biton32(layer_state)) {
-    case 0:
-      set_layer_color(BASE);
-      break;
-    case 1:
-      set_layer_color(LOWER);
-      break;
-    case 2:
-      set_layer_color(RAISED);
-      break;
-    case 3:
-      set_layer_color(MOVEMENT);
-      break;
-    case 4:
-      set_layer_color(OBSIDIAN);
-      break;
-    case 5:
-      set_layer_color(GAME);
-      break;
-    case 6:
-      set_layer_color(NUMPAD);
-      break;
-    case MOUSE:
-      set_layer_color(MOUSE);
-      break;
-   default:
-    if (rgb_matrix_get_flags() == LED_FLAG_NONE)
-      rgb_matrix_set_color_all(0, 0, 0);
-    break;
-  }
-  return true;
+    if (rawhid_state.rgb_control) {
+        return false;
+    }
+    if (keyboard_config.disable_layer_led) {
+        return false;
+    }
+    switch (biton32(layer_state)) {
+        case MOUSE:
+        case BASE ... NUMPAD:
+            set_layer_color(biton32(layer_state));
+            break;
+        default:
+            if (rgb_matrix_get_flags() == LED_FLAG_NONE) {
+                rgb_matrix_set_color_all(0, 0, 0);
+            }
+            break;
+    }
+    return true;
 }
 
 void space_dash_change_status(bool status) {
@@ -274,8 +257,12 @@ void space_dash_change_status(bool status) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_sentence_case(keycode, record)) { return false; }
-    if (!process_space_dash(keycode, record)) { return false; }
+    if (!process_sentence_case(keycode, record)) {
+        return false;
+    }
+    if (!process_space_dash(keycode, record)) {
+        return false;
+    }
 
     switch (keycode) {
         case RGB_SLD:
@@ -292,15 +279,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 toggle_space_dash();
             }
-        }
+    }
     return true;
 }
 
 void suspend_power_down_user(void) {
-          STATUS_LED_1(false);
-          STATUS_LED_2(false);
-          STATUS_LED_3(false);
-          STATUS_LED_4(false);
+    STATUS_LED_1(false);
+    STATUS_LED_2(false);
+    STATUS_LED_3(false);
+    STATUS_LED_4(false);
 }
 
 void suspend_wakeup_init_user(void) {
@@ -311,52 +298,50 @@ void suspend_wakeup_init_user(void) {
     layer_move(BASE);
 }
 bool shutdown_user(bool jump_to_bootloader) {
-          STATUS_LED_1(false);
-          STATUS_LED_2(false);
-          STATUS_LED_3(false);
-          STATUS_LED_4(false);
-          layer_move(BASE);
+    STATUS_LED_1(false);
+    STATUS_LED_2(false);
+    STATUS_LED_3(false);
+    STATUS_LED_4(false);
+    layer_move(BASE);
     // false to not process kb level
     return false;
 }
 
 // sentence case stuff
-char sentence_case_press_user(uint16_t keycode,
-                              keyrecord_t* record,
-                              uint8_t mods) {
-  if ((mods & ~(MOD_MASK_SHIFT | MOD_BIT(KC_RALT))) == 0) {
-    const bool shifted = mods & MOD_MASK_SHIFT;
-    switch (keycode) {
-      case KC_A ... KC_Z:
-        return 'a';  // Letter key.
+char sentence_case_press_user(uint16_t keycode, keyrecord_t *record, uint8_t mods) {
+    if ((mods & ~(MOD_MASK_SHIFT | MOD_BIT(KC_RALT))) == 0) {
+        const bool shifted = mods & MOD_MASK_SHIFT;
+        switch (keycode) {
+            case KC_A ... KC_Z:
+                return 'a'; // Letter key.
 
-      case KC_DOT:  // . is punctuation, Shift . is a symbol (>)
-      case KC_RIGHT_BRACKET:
-        return !shifted ? '.' : '#';
-      case KC_1:
-      case KC_SLSH:
-        return shifted ? '.' : '#';
-      case KC_EXLM:
-      case KC_QUES:
-        return '.';
-      case KC_2 ... KC_0:  // 2 3 4 5 6 7 8 9 0
-      case KC_AT ... KC_RPRN:  // @ # $ % ^ & * ( )
-      case KC_MINS ... KC_LEFT_BRACKET:
-      case KC_BACKSLASH ... KC_SEMICOLON:
-      case KC_UNDS ... KC_COLN:  // _ + { } | :
-      case KC_GRV:
-      case KC_COMM:
-        return '#';  // Symbol key.
+            case KC_DOT: // . is punctuation, Shift . is a symbol (>)
+            case KC_RIGHT_BRACKET:
+                return !shifted ? '.' : '#';
+            case KC_1:
+            case KC_SLSH:
+                return shifted ? '.' : '#';
+            case KC_EXLM:
+            case KC_QUES:
+                return '.';
+            case KC_2 ... KC_0:     // 2 3 4 5 6 7 8 9 0
+            case KC_AT ... KC_RPRN: // @ # $ % ^ & * ( )
+            case KC_MINS ... KC_LEFT_BRACKET:
+            case KC_BACKSLASH ... KC_SEMICOLON:
+            case KC_UNDS ... KC_COLN: // _ + { } | :
+            case KC_GRV:
+            case KC_COMM:
+                return '#'; // Symbol key.
 
-      case KC_SPC:
-        return ' ';  // Space key.
+            case KC_SPC:
+                return ' '; // Space key.
 
-      case KC_QUOT:
-        return '\'';  // Quote key.
+            case KC_QUOT:
+                return '\''; // Quote key.
+        }
     }
-  }
 
-  // Otherwise clear Sentence Case to initial state.
-  sentence_case_clear();
-  return '\0';
+    // Otherwise clear Sentence Case to initial state.
+    sentence_case_clear();
+    return '\0';
 }
