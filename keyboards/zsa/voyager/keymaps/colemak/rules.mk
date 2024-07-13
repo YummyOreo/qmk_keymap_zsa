@@ -10,6 +10,12 @@ COMBO_ENABLE = yes
 AUTOCORRECT_ENABLE = yes
 SRC += features/sentence_case.c
 SRC += features/space_dash.c
+
+SRC += features/mouse_turbo_click.c
+
+MOUSEKEY_ENABLE = yes
+DEFERRED_EXEC_ENABLE = yes
+
 LTO_ENABLE = yes
 LEADER_ENABLE = yes
 # TAP_DANCE_ENABLE = yes

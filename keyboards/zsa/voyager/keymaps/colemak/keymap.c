@@ -1,8 +1,8 @@
-#include <wchar.h>
 #include QMK_KEYBOARD_H
 #include "version.h"
 #include "features/sentence_case.h"
 #include "features/space_dash.h"
+#include "features/mouse_turbo_click.h"
 #define MOON_LED_LEVEL LED_LEVEL
 #define ML_SAFE_RANGE SAFE_RANGE
 #include <stdbool.h>
@@ -12,8 +12,10 @@ enum custom_keycodes {
     RGB_SLD = ML_SAFE_RANGE,
     EXIT_GAME,
     TOGGLE_SPACE_DASH,
+    TURBO,
 };
 
+// Obsidian Shortcuts
 #define OBSIDIAN_TEMPLATE MEH(KC_T)
 #define OBSIDIAN_NEW_NOTE MEH(KC_N)
 #define OBSIDIAN_NEW_NOTE_SELECTED MEH(KC_S)
@@ -24,9 +26,18 @@ enum custom_keycodes {
 #define OBSIDIAN_MODE_SWAP MEH(KC_G)
 #define OBSIDIAN_ADVANCED_TABLES MEH(KC_F)
 
-enum layers { BASE, LOWER, RAISED, MOVEMENT, OBSIDIAN, GAME, NUMPAD, QWERTY, MOUSE };
+enum layers {
+    BASE,
+    LOWER,
+    RAISED,
+    MOVEMENT,
+    OBSIDIAN,
+    GAME,
+    NUMPAD,
+    QWERTY,
+    MOUSE
+};
 
-// clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // main
   [BASE] = LAYOUT_voyager(
@@ -54,10 +65,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   // Movement
   [MOVEMENT] = LAYOUT_voyager(
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(KC_LEFT),  LALT(KC_RIGHT), KC_TRANSPARENT,                                 KC_TRANSPARENT, LCTL(LSFT(KC_TAB)),LCTL(KC_TAB),   LCTL(KC_T),     LCTL(KC_W),     KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(KC_DOWN),  LALT(KC_UP),    KC_TRANSPARENT,                                 KC_TRANSPARENT, LALT(KC_1),     LALT(KC_2),     LALT(KC_3),     LALT(KC_4),     LALT(KC_5),
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LCTL(LSFT(KC_T)),KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(KC_LEFT),  LALT(KC_RIGHT), KC_TRANSPARENT,                                 KC_TRANSPARENT, LCTL(LSFT(KC_TAB)),LCTL(KC_TAB),LCTL(KC_T),      LCTL(KC_W),     KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(KC_DOWN),  LALT(KC_UP),    KC_TRANSPARENT,                                 KC_TRANSPARENT, LALT(KC_1),     LALT(KC_2),     LALT(KC_3),      LALT(KC_4),     LALT(KC_5),
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,  KC_TRANSPARENT, KC_TRANSPARENT,
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
   // Obsidian
@@ -94,10 +105,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   // MOUSE
   [MOUSE] = LAYOUT_voyager(
-    KC_TRANSPARENT, KC_MS_BTN1,     KC_MS_UP,       KC_MS_BTN2,     KC_MS_ACCEL0,   KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_MS_BTN1,     KC_MS_UP,       KC_MS_BTN2,     KC_MS_ACCEL0,   TURBO,                                          KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_MS_LEFT,     KC_MS_DOWN,     KC_MS_RIGHT,    KC_MS_ACCEL1,   KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_MS_BTN3,     KC_MS_WH_UP,    KC_MS_WH_DOWN,  KC_MS_ACCEL2,   KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TO(BASE),       KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 TO(BASE),       KC_TRANSPARENT
   ),
 };
@@ -155,22 +166,28 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 
 void leader_end_user(void) {
     if (leader_sequence_one_key(KC_A)) {
+        // Toggle autocorrect
         autocorrect_toggle();
         STATUS_LED_1(autocorrect_is_enabled());
     } else if (leader_sequence_one_key(KC_G)) {
+        // Enter game layer
         enter_game();
-    } else if (leader_sequence_two_keys(KC_LEFT_SHIFT, KC_Q)) {
-        tap_code16(KC_ESCAPE);
-        SEND_STRING("I- \"\"");
-        tap_code16(KC_LEFT);
     } else if (leader_sequence_one_key(KC_Q)) {
+        // Make a new line for a quote
         tap_code16(KC_ESCAPE);
         SEND_STRING("o- \"\"");
         tap_code16(KC_LEFT);
+    } else if (leader_sequence_two_keys(KC_LEFT_SHIFT, KC_Q)) {
+        // Add quote to current line
+        tap_code16(KC_ESCAPE);
+        SEND_STRING("I- \"\"");
+        tap_code16(KC_LEFT);
     } else if (leader_sequence_one_key(KC_LEFT_SHIFT)) {
+        // Toggle sentence case
         sentence_case_toggle();
         STATUS_LED_2(is_sentence_case_on());
     } else if (leader_sequence_one_key(KC_D)) {
+        // Toggle space dash
         toggle_space_dash();
     }
 }
@@ -187,6 +204,8 @@ extern rgb_config_t rgb_matrix_config;
 
 void keyboard_post_init_user(void) {
     rgb_matrix_enable();
+
+    // turn on default settings
     STATUS_LED_1(true);
     STATUS_LED_2(true);
 }
@@ -199,14 +218,15 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
 
     [RAISED] = { {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
-    [MOVEMENT] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
+    [MOVEMENT] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
     [OBSIDIAN] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
     [GAME] = { {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255} },
 
     [NUMPAD] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
-    [MOUSE] = { {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {252,3,244}, {0,0,0} },
+
+    [MOUSE] = { {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {0,0,0}, {252,3,244}, {252,3,244}, {252,3,244}, {252,3,244}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {252,3,244}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {252,3,244}, {0,0,0} },
 };
 // clang-format on
 
@@ -256,11 +276,52 @@ void space_dash_change_status(bool status) {
     }
 }
 
+// sentence case stuff
+char sentence_case_press_user(uint16_t keycode, keyrecord_t *record, uint8_t mods) {
+    if ((mods & ~(MOD_MASK_SHIFT | MOD_BIT(KC_RALT))) == 0) {
+        const bool shifted = mods & MOD_MASK_SHIFT;
+        switch (keycode) {
+            case KC_A ... KC_Z:
+                return 'a'; // Letter key.
+            case KC_DOT:    // . is punctuation, Shift . is a symbol (>)
+            case KC_RIGHT_BRACKET:
+                return !shifted ? '.' : '#';
+            case KC_1:
+            case KC_SLSH:
+                return shifted ? '.' : '#';
+            case KC_EXLM:
+            case KC_QUES:
+                return '.';
+            case KC_2 ... KC_0:     // 2 3 4 5 6 7 8 9 0
+            case KC_AT ... KC_RPRN: // @ # $ % ^ & * ( )
+            case KC_MINS ... KC_LEFT_BRACKET:
+            case KC_BACKSLASH ... KC_SEMICOLON:
+            case KC_UNDS ... KC_COLN: // _ + { } | :
+            case KC_GRV:
+            case KC_COMM:
+                return '#'; // Symbol key.
+
+            case KC_SPC:
+                return ' '; // Space key.
+
+            case KC_QUOT:
+                return '\''; // Quote key.
+        }
+    }
+
+    // Otherwise clear Sentence Case to initial state.
+    sentence_case_clear();
+    return '\0';
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_sentence_case(keycode, record)) {
         return false;
     }
     if (!process_space_dash(keycode, record)) {
+        return false;
+    }
+    if (!process_mouse_turbo_click(keycode, record, TURBO)) {
         return false;
     }
 
@@ -291,57 +352,18 @@ void suspend_power_down_user(void) {
 }
 
 void suspend_wakeup_init_user(void) {
-    STATUS_LED_1(autocorrect_is_enabled());
-    STATUS_LED_2(is_sentence_case_on());
-    STATUS_LED_3(is_caps_word_on());
-    STATUS_LED_4(get_space_dash_status());
+    STATUS_LED_1(true);
+    STATUS_LED_2(true);
+    STATUS_LED_3(false);
+    STATUS_LED_4(false);
     layer_move(BASE);
 }
+
 bool shutdown_user(bool jump_to_bootloader) {
     STATUS_LED_1(false);
     STATUS_LED_2(false);
     STATUS_LED_3(false);
     STATUS_LED_4(false);
-    layer_move(BASE);
     // false to not process kb level
     return false;
-}
-
-// sentence case stuff
-char sentence_case_press_user(uint16_t keycode, keyrecord_t *record, uint8_t mods) {
-    if ((mods & ~(MOD_MASK_SHIFT | MOD_BIT(KC_RALT))) == 0) {
-        const bool shifted = mods & MOD_MASK_SHIFT;
-        switch (keycode) {
-            case KC_A ... KC_Z:
-                return 'a'; // Letter key.
-
-            case KC_DOT: // . is punctuation, Shift . is a symbol (>)
-            case KC_RIGHT_BRACKET:
-                return !shifted ? '.' : '#';
-            case KC_1:
-            case KC_SLSH:
-                return shifted ? '.' : '#';
-            case KC_EXLM:
-            case KC_QUES:
-                return '.';
-            case KC_2 ... KC_0:     // 2 3 4 5 6 7 8 9 0
-            case KC_AT ... KC_RPRN: // @ # $ % ^ & * ( )
-            case KC_MINS ... KC_LEFT_BRACKET:
-            case KC_BACKSLASH ... KC_SEMICOLON:
-            case KC_UNDS ... KC_COLN: // _ + { } | :
-            case KC_GRV:
-            case KC_COMM:
-                return '#'; // Symbol key.
-
-            case KC_SPC:
-                return ' '; // Space key.
-
-            case KC_QUOT:
-                return '\''; // Quote key.
-        }
-    }
-
-    // Otherwise clear Sentence Case to initial state.
-    sentence_case_clear();
-    return '\0';
 }
