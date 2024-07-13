@@ -33,8 +33,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,         KC_Q,           KC_W,           KC_F,           KC_P,           KC_B,                                           KC_J,           KC_L,           KC_U,           KC_Y,           KC_SCLN,        KC_BSPC,
     KC_ESCAPE,      KC_A,           KC_R,           KC_S,           KC_T,           KC_G,                                           KC_M,           KC_N,           KC_E,           KC_I,           KC_O,           KC_ENTER,
     KC_LEFT_SHIFT,  KC_Z,           KC_X,           KC_C,           KC_D,           KC_V,                                           KC_K,           KC_H,           KC_COMMA,       KC_DOT,         KC_SLASH,       MT(MOD_RSFT, KC_QUOTE),
-    KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    TO(MOUSE),      KC_LEFT_ALT,    QK_LEAD,                                   KC_RIGHT_CTRL,  QK_LEAD,   KC_LEFT,        KC_UP,          KC_DOWN,        KC_RIGHT,
-                                                    MO(LOWER),          KC_SPACE,                                       LT(MOVEMENT, KC_BSPC),  MO(RAISED)
+    KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    TO(MOUSE),      KC_LEFT_ALT,    QK_LEAD,                                        KC_RIGHT_CTRL,  QK_LEAD,        KC_LEFT,        KC_UP,          KC_DOWN,        KC_RIGHT,
+                                                    MO(LOWER),      KC_SPACE,                               LT(MOVEMENT, KC_BSPC),  MO(RAISED)
   ),
   // Lower
   [LOWER] = LAYOUT_voyager(
@@ -62,9 +62,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   // Obsidian
   [OBSIDIAN] = LAYOUT_voyager(
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, OBSIDIAN_NEW_NOTE_SELECTED,KC_TRANSPARENT,                                 KC_TRANSPARENT, OBSIDIAN_MODE_SWAP,KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, OBSIDIAN_LIT_NOTE, OBSIDIAN_NEW_NOTE, OBSIDIAN_TEMPLATE,                                     OBSIDIAN_QUICKADD, OBSIDIAN_CALLOUT, OBSIDIAN_ADVANCED_TABLES,KC_TRANSPARENT,KC_TRANSPARENT,KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, TOGGLE_SPACE_DASH,KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, OBSIDIAN_NEW_NOTE_SELECTED, KC_TRANSPARENT,                     KC_TRANSPARENT, OBSIDIAN_MODE_SWAP, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, OBSIDIAN_LIT_NOTE, OBSIDIAN_NEW_NOTE,      OBSIDIAN_TEMPLATE,                   OBSIDIAN_QUICKADD,OBSIDIAN_CALLOUT, OBSIDIAN_ADVANCED_TABLES, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, TOGGLE_SPACE_DASH,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
@@ -73,8 +73,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_ESCAPE,      KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_LEFT_SHIFT,  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_LEFT_CTRL,   KC_TRANSPARENT, KC_TRANSPARENT, KC_F3,          KC_TRANSPARENT, MO(NUMPAD),                                          KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_QUOTE,
-                                                    KC_LEFT_CTRL,   KC_SPACE,                                       EXIT_GAME,          KC_LEFT_GUI
+    KC_LEFT_CTRL,   KC_TRANSPARENT, KC_TRANSPARENT, KC_F3,          KC_TRANSPARENT, MO(NUMPAD),                                     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_QUOTE,
+                                                    KC_LEFT_CTRL,   KC_SPACE,                                       EXIT_GAME,      KC_LEFT_GUI
   ),
   // Numpad
   [NUMPAD] = LAYOUT_voyager(
@@ -98,7 +98,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_MS_LEFT,     KC_MS_DOWN,     KC_MS_RIGHT,    KC_MS_ACCEL1,   KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_MS_BTN3,     KC_MS_WH_UP,    KC_MS_WH_DOWN,  KC_MS_ACCEL2,   KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-                                                    KC_TRANSPARENT, KC_TRANSPARENT,                                 TO(BASE), KC_TRANSPARENT
+                                                    KC_TRANSPARENT, KC_TRANSPARENT,                                 TO(BASE),       KC_TRANSPARENT
   ),
 };
 
@@ -129,6 +129,7 @@ const uint16_t PROGMEM game_enter_combo[] = { KC_BSPC, KC_ENTER, COMBO_END};
 const uint16_t PROGMEM qwerty_enter_combo[] = { MT(MOD_RSFT, KC_QUOTE), KC_BSPC, COMBO_END};
 const uint16_t PROGMEM toggle_autocorrect_combo[] = { KC_BACKSPACE, KC_RIGHT, COMBO_END };
 
+
 combo_t key_combos[] = {
     COMBO(obsidian_combo, OSL(OBSIDIAN)),
     COMBO(qwerty_enter_combo, TO(QWERTY)),
@@ -158,14 +159,13 @@ void leader_end_user(void) {
           STATUS_LED_1(autocorrect_is_enabled());
     } else if (leader_sequence_one_key(KC_G)) {
         enter_game();
-    } else if (leader_sequence_three_keys(KC_LEFT_SHIFT, KC_O, KC_Q)) {
-        SEND_STRING("O- \"\"");
-        tap_code16(KC_LEFT);
-    } else if (leader_sequence_two_keys(KC_O, KC_Q)) {
-        SEND_STRING("o- \"\"");
+    } else if (leader_sequence_two_keys(KC_LEFT_SHIFT, KC_Q)) {
+        tap_code16(KC_ESCAPE);
+        SEND_STRING("I- \"\"");
         tap_code16(KC_LEFT);
     } else if (leader_sequence_one_key(KC_Q)) {
-        SEND_STRING("I- \"\"");
+        tap_code16(KC_ESCAPE);
+        SEND_STRING("o- \"\"");
         tap_code16(KC_LEFT);
     } else if (leader_sequence_one_key(KC_LEFT_SHIFT)) {
         sentence_case_toggle();

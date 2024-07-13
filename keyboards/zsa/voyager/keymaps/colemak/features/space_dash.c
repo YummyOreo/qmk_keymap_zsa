@@ -21,16 +21,11 @@ bool process_space_dash(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
         case KC_ESCAPE:
-            if (record->event.pressed) {
-                turn_space_dash_off();
-                return true;
-            }
         case KC_ENTER:
             if (record->event.pressed) {
                 turn_space_dash_off();
                 return true;
             }
-
     }
     return true;
 }
