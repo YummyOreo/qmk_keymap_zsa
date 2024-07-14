@@ -32,9 +32,9 @@ enum layers {
     BASE,
     LOWER,
     RAISED,
+    GAME,
     MOVEMENT,
     OBSIDIAN,
-    GAME,
     NUMPAD,
     QWERTY,
     MOUSE
@@ -58,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //                                                   _______,        _______,                                        _______,        _______
   // ),
   [LOWER] = LAYOUT_voyager(
-    _______,        _______,        KC_LBRC,        KC_LCBR,        KC_LPRN,        _______,                                        KC_CIRC,        KC_RPRN,        KC_RCBR,        KC_RBRC,        _______,        _______,
+    _______,        _______,        KC_LBRC,        KC_LPRN,        KC_LCBR,        _______,                                        KC_CIRC,        KC_RCBR,        KC_RPRN,        KC_RBRC,        _______,        _______,
     KC_GRAVE,       KC_DLR,         KC_ASTR,        KC_EQUAL,       KC_UNDS,        KC_MINUS,                                       KC_HASH,        OSM(MOD_LCTL),  OSM(MOD_LALT),  OSM(MOD_LSFT),  OSM(MOD_RGUI),  KC_TILD,
     _______,        KC_PERC,        KC_PIPE,        KC_AT,          KC_BSLS,        KC_PLUS,                                        KC_EXLM,        KC_SLSH,        KC_AMPR,        KC_QUES,        _______,        _______,
     _______,        _______,        _______,        _______,        _______,        _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
@@ -93,8 +93,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,        _______,         _______,        _______,       _______,         _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
     KC_ESCAPE,     _______,         _______,        _______,       _______,         _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
     KC_LEFT_SHIFT, _______,         _______,        _______,       _______,         _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
-    KC_LEFT_CTRL,  _______,         _______,        KC_F3,         _______,         MO(NUMPAD),                                     _______,        _______,        _______,        _______,        _______,        KC_QUOTE,
-                                                    KC_LEFT_CTRL,  KC_SPACE,                                       EXIT_GAME,       KC_LEFT_GUI
+    KC_LEFT_CTRL,  _______,         _______,        KC_F3,         _______,         _______,                                     _______,        _______,        _______,        _______,        _______,        KC_QUOTE,
+                                                    MO(NUMPAD),  KC_SPACE,                                       EXIT_GAME,       MO(MOVEMENT)
   ),
   // Numpad
   [NUMPAD] = LAYOUT_voyager(
