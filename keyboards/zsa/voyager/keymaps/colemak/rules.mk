@@ -9,8 +9,8 @@ COMBO_ENABLE = yes
 AUTOCORRECT_ENABLE = yes
 SRC += features/sentence_case.c
 SRC += features/space_dash.c
-
 SRC += features/mouse_turbo_click.c
+SRC += features/swapper.c
 
 MOUSEKEY_ENABLE = yes
 DEFERRED_EXEC_ENABLE = yes
