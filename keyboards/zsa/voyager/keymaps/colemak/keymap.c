@@ -4,6 +4,7 @@
 #include "features/swapper.h"
 #include "features/space_dash.h"
 #include "features/mouse_turbo_click.h"
+#include "features/leader.h"
 #define MOON_LED_LEVEL LED_LEVEL
 #define ML_SAFE_RANGE SAFE_RANGE
 #include <stdbool.h>
@@ -14,7 +15,8 @@ enum custom_keycodes {
     EXIT_GAME,
     TOGGLE_SPACE_DASH,
     TURBO,
-    SW_WIN
+    SW_WIN,
+    LEADER
 };
 
 // Obsidian Shortcuts
@@ -46,7 +48,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,         KC_Q,           KC_W,           KC_F,           KC_P,           KC_B,                                           KC_J,           KC_L,           KC_U,           KC_Y,           KC_SCLN,        KC_BSPC,
     KC_ESCAPE,      KC_A,           KC_R,           KC_S,           KC_T,           KC_G,                                           KC_M,           KC_N,           KC_E,           KC_I,           KC_O,           KC_ENTER,
     KC_LEFT_SHIFT,  MT(MOD_LSFT, KC_Z),KC_X,        KC_C,           KC_D,           KC_V,                                           KC_K,           KC_H,           KC_COMMA,       KC_DOT,         KC_SLASH,       MT(MOD_RSFT, KC_QUOTE),
-    KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    TO(MOUSE),      KC_LEFT_ALT,    QK_LEAD,                                        KC_RIGHT_CTRL,  QK_LEAD,        KC_LEFT,        KC_UP,          KC_DOWN,        KC_RIGHT,
+    KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    TO(MOUSE),      KC_LEFT_ALT,    LEADER,                                        KC_RIGHT_CTRL,  LEADER,        KC_LEFT,        KC_UP,          KC_DOWN,        KC_RIGHT,
                                                     MO(LOWER),      KC_SPACE,                               LT(MOVEMENT, KC_BSPC),  MO(RAISED)
   ),
   // Lower
@@ -59,8 +61,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ),
   [LOWER] = LAYOUT_voyager(
     _______,        _______,        KC_LBRC,        KC_LPRN,        KC_LCBR,        _______,                                        KC_CIRC,        KC_RCBR,        KC_RPRN,        KC_RBRC,        _______,        _______,
-    KC_GRAVE,       KC_DLR,         KC_ASTR,        KC_EQUAL,       KC_UNDS,        KC_MINUS,                                       KC_HASH,        OSM(MOD_LCTL),  OSM(MOD_LALT),  OSM(MOD_LSFT),  OSM(MOD_RGUI),  KC_TILD,
-    _______,        KC_PERC,        KC_PIPE,        KC_AT,          KC_BSLS,        KC_PLUS,                                        KC_EXLM,        KC_SLSH,        KC_AMPR,        KC_QUES,        _______,        _______,
+    KC_GRAVE,       KC_DLR,         KC_ASTR,        KC_EQUAL,       KC_MINUS,       KC_UNDS,                                        KC_HASH,        OSM(MOD_LCTL),  OSM(MOD_LALT),  OSM(MOD_LSFT),  OSM(MOD_RGUI),  KC_TILD,
+    _______,        KC_PERC,        KC_PIPE,        KC_AT,          KC_PLUS,        KC_BSLS,                                        KC_EXLM,        KC_SLSH,        KC_AMPR,        KC_QUES,        _______,        _______,
     _______,        _______,        _______,        _______,        _______,        _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
                                                     _______,        _______,                                        _______,        _______
   ),
@@ -173,33 +175,60 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
     }
 }
 
-void leader_end_user(void) {
-    if (leader_sequence_one_key(KC_A)) {
-        // Toggle autocorrect
-        autocorrect_toggle();
-        STATUS_LED_1(autocorrect_is_enabled());
-    } else if (leader_sequence_one_key(KC_G)) {
-        // Enter game layer
-        enter_game();
-    } else if (leader_sequence_one_key(KC_Q)) {
-        // Make a new line for a quote
-        tap_code16(KC_ESCAPE);
-        SEND_STRING("o- \"\"");
-        tap_code16(KC_LEFT);
-    } else if (leader_sequence_two_keys(KC_LEFT_SHIFT, KC_Q)) {
-        // Add quote to current line
-        tap_code16(KC_ESCAPE);
-        SEND_STRING("I- \"\"");
-        tap_code16(KC_LEFT);
-    } else if (leader_sequence_one_key(KC_LEFT_SHIFT)) {
-        // Toggle sentence case
-        sentence_case_toggle();
-        STATUS_LED_2(is_sentence_case_on());
-    } else if (leader_sequence_one_key(KC_D)) {
-        // Toggle space dash
-        toggle_space_dash();
+void *leader_start_func(uint16_t keycode) {
+    switch (keycode) {
+        case KC_A:
+            // toggle autocorrect
+            autocorrect_toggle();
+            STATUS_LED_1(autocorrect_is_enabled());
+            return NULL; // function that will choose new base layers
+        case KC_Q:
+            // Make a new line for a quote
+            tap_code16(KC_ESCAPE);
+            SEND_STRING("o- \"\"");
+            tap_code16(KC_LEFT);
+            return NULL;
+        case KC_LEFT_SHIFT:
+            // Toggle sentence case
+            sentence_case_toggle();
+            STATUS_LED_2(is_sentence_case_on());
+            return NULL;
+        case KC_D:
+            // Toggle space dash
+            toggle_space_dash();
+            return NULL;
+        default:
+            return NULL;
     }
 }
+
+// void leader_end_user(void) {
+//     if (leader_sequence_one_key(KC_A)) {
+//         // Toggle autocorrect
+//         autocorrect_toggle();
+//         STATUS_LED_1(autocorrect_is_enabled());
+//     } else if (leader_sequence_one_key(KC_G)) {
+//         // Enter game layer
+//         enter_game();
+//     } else if (leader_sequence_one_key(KC_Q)) {
+//         // Make a new line for a quote
+//         tap_code16(KC_ESCAPE);
+//         SEND_STRING("o- \"\"");
+//         tap_code16(KC_LEFT);
+//     } else if (leader_sequence_two_keys(KC_LEFT_SHIFT, KC_Q)) {
+//         // Add quote to current line
+//         tap_code16(KC_ESCAPE);
+//         SEND_STRING("I- \"\"");
+//         tap_code16(KC_LEFT);
+//     } else if (leader_sequence_one_key(KC_LEFT_SHIFT)) {
+//         // Toggle sentence case
+//         sentence_case_toggle();
+//         STATUS_LED_2(is_sentence_case_on());
+//     } else if (leader_sequence_one_key(KC_D)) {
+//         // Toggle space dash
+//         toggle_space_dash();
+//     }
+// }
 
 void caps_word_set_user(bool active) {
     if (active) {
@@ -281,11 +310,7 @@ bool rgb_matrix_indicators_user(void) {
 }
 
 void space_dash_change_status(bool status) {
-    if (status) {
-        STATUS_LED_4(true);
-    } else {
-        STATUS_LED_4(false);
-    }
+    STATUS_LED_4(status);
 }
 
 // sentence case stuff
@@ -329,6 +354,9 @@ char sentence_case_press_user(uint16_t keycode, keyrecord_t *record, uint8_t mod
 bool sw_win_active = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_leader(keycode, record)) {
+        return false;
+    }
     if (!process_sentence_case(keycode, record)) {
         return false;
     }
@@ -338,26 +366,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_mouse_turbo_click(keycode, record, TURBO)) {
         return false;
     }
-    update_swapper(
-        &sw_win_active, KC_LALT, KC_TAB, SW_WIN,
-        keycode, record
-    );
+    update_swapper(&sw_win_active, KC_LALT, KC_TAB, SW_WIN, keycode, record);
 
-    switch (keycode) {
-        case RGB_SLD:
-            if (record->event.pressed) {
+    if (record->event.pressed) {
+        switch (keycode) {
+            case RGB_SLD:
                 rgblight_mode(1);
-            }
-            return false;
-        case EXIT_GAME:
-            if (record->event.pressed) {
+                return false;
+            case EXIT_GAME:
                 exit_game();
-            }
-            return false;
-        case TOGGLE_SPACE_DASH:
-            if (record->event.pressed) {
+                return false;
+            case TOGGLE_SPACE_DASH:
                 toggle_space_dash();
-            }
+                return false;
+            case LEADER:
+                if (!is_leading()) {
+                    start_leading();
+                }
+                return false;
+        }
     }
     return true;
 }

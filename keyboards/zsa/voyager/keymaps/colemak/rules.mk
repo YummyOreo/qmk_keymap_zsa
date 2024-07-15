@@ -11,12 +11,13 @@ SRC += features/sentence_case.c
 SRC += features/space_dash.c
 SRC += features/mouse_turbo_click.c
 SRC += features/swapper.c
+SRC += features/leader.c
 
 MOUSEKEY_ENABLE = yes
 DEFERRED_EXEC_ENABLE = yes
 
 LTO_ENABLE = yes
-LEADER_ENABLE = yes
+# LEADER_ENABLE = yes
 # TAP_DANCE_ENABLE = yes
 CAPS_WORD_ENABLE = yes
 UNICODE_COMMON = no
