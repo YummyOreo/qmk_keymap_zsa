@@ -5,6 +5,7 @@
 #include "features/space_dash.h"
 #include "features/mouse_turbo_click.h"
 #include "features/leader.h"
+#include "features/title_case.h"
 #define MOON_LED_LEVEL LED_LEVEL
 #define ML_SAFE_RANGE SAFE_RANGE
 #include <stdbool.h>
@@ -24,6 +25,7 @@ enum custom_keycodes {
 #define OBSIDIAN_NEW_NOTE MEH(KC_N)
 #define OBSIDIAN_NEW_NOTE_SELECTED MEH(KC_S)
 #define OBSIDIAN_LIT_NOTE MEH(KC_L)
+#define OBSIDIAN_ARCHIVE_BOOK MEH(KC_B)
 
 #define OBSIDIAN_QUICKADD MEH(KC_A)
 #define OBSIDIAN_CALLOUT MEH(KC_C)
@@ -85,8 +87,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   // Obsidian
   [OBSIDIAN] = LAYOUT_voyager(
-    _______,       _______,         _______,        _______,       OBSIDIAN_NEW_NOTE_SELECTED, _______,                             _______,        OBSIDIAN_MODE_SWAP,_______,     _______,        _______,        _______,
-    _______,       _______,         _______,        OBSIDIAN_LIT_NOTE,OBSIDIAN_NEW_NOTE,       OBSIDIAN_TEMPLATE,                   OBSIDIAN_QUICKADD,OBSIDIAN_CALLOUT, OBSIDIAN_ADVANCED_TABLES,_______,_______,   _______,
+    _______,       _______,         _______,        OBSIDIAN_ARCHIVE_BOOK,OBSIDIAN_NEW_NOTE_SELECTED, _______,                      _______,        OBSIDIAN_MODE_SWAP,_______,     _______,        _______,        _______,
+    _______,       _______,         _______,        OBSIDIAN_LIT_NOTE,OBSIDIAN_NEW_NOTE,OBSIDIAN_TEMPLATE,                          OBSIDIAN_QUICKADD,OBSIDIAN_CALLOUT, OBSIDIAN_ADVANCED_TABLES,_______,_______,   _______,
     _______,       _______,         _______,        _______,       _______,         _______,                                        _______,        TOGGLE_SPACE_DASH,_______,      _______,        _______,        _______,
     _______,       _______,         _______,        _______,       _______,         _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
                                                     _______,       _______,                                        _______,         _______
@@ -139,6 +141,7 @@ void enter_game(void) {
     sentence_case_off();
     turn_space_dash_off();
     caps_word_off();
+    turn_title_case_off();
     STATUS_LED_1(false);
     STATUS_LED_2(false);
 }
@@ -148,6 +151,7 @@ void reset(void) {
     sentence_case_on();
     turn_space_dash_off();
     caps_word_off();
+    turn_title_case_off();
     STATUS_LED_1(true);
     STATUS_LED_2(true);
     STATUS_LED_3(false);
@@ -209,7 +213,15 @@ void *leader_start_func(uint16_t keycode) {
             SEND_STRING("o- \"\"");
             tap_code16(KC_LEFT);
             return NULL;
+        case KC_T:
+            // Make a new line for a todo
+            tap_code16(KC_ESCAPE);
+            SEND_STRING("o- [ ] ");
+            return NULL;
         case KC_LEFT_SHIFT:
+            toggle_title_case();
+            return NULL;
+        case KC_DOT:
             // Toggle sentence case
             sentence_case_toggle();
             STATUS_LED_2(is_sentence_case_on());
@@ -290,7 +302,7 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
 
     [MOVEMENT] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
-    [OBSIDIAN] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
+    [OBSIDIAN] = { {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
     [GAME] = { {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255} },
 
@@ -301,6 +313,12 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
     [AUDIO] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {214,252,252}, {214,252,252}, {214,252,252}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {214,252,252}, {214,252,252}, {214,252,252}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {214,100,252}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {214,100,252}, {0,0,0} },
 };
 // clang-format on
+
+void title_case_layer_color(int index, float f) {
+    if (get_title_case_status()) {
+        rgb_matrix_set_color(index, f * 255, f * 0, f * 0);
+    }
+}
 
 void set_layer_color(int layer) {
     for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
@@ -317,6 +335,8 @@ void set_layer_color(int layer) {
             rgb_matrix_set_color(i, f * rgb.r, f * rgb.g, f * rgb.b);
         }
     }
+    float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
+    title_case_layer_color(RGB_MATRIX_LED_COUNT - 8, f);
 }
 
 bool rgb_matrix_indicators_user(void) {
@@ -392,6 +412,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
     if (!process_space_dash(keycode, record)) {
+        return false;
+    }
+    if (!process_title_case(keycode, record)) {
         return false;
     }
     if (!process_mouse_turbo_click(keycode, record, TURBO)) {
