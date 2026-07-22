@@ -13,11 +13,11 @@
 // clang-format off
 enum custom_keycodes {
     RGB_SLD = ML_SAFE_RANGE,
-    EXIT_GAME,
     TOGGLE_SPACE_DASH,
     TURBO,
     SW_WIN,
-    LEADER
+    LEADER,
+    FULLSCREEN_OR_WIN,
 };
 
 // Obsidian Shortcuts
@@ -32,14 +32,15 @@ enum custom_keycodes {
 #define OBSIDIAN_MODE_SWAP MEH(KC_G)
 #define OBSIDIAN_ADVANCED_TABLES MEH(KC_F)
 #define OBSIDIAN_JUMPT_CURSOR LALT(KC_T)
-#define OBSIDIAN_WEB_SNIPPER LSA(KC_O)
+
+#define TICK_TICK_QUCIKADD LSA(KC_O)
 
 enum layers {
     BASE,
     LOWER,
     RAISED,
-    GAME,
     MOVEMENT,
+    // MOVEMENTLINUX,
     OBSIDIAN,
     NUMPAD,
     QWERTY,
@@ -53,7 +54,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,         KC_Q,           KC_W,           KC_F,           KC_P,           KC_B,                                           KC_J,           KC_L,           KC_U,           KC_Y,           KC_SCLN,        KC_BSPC,
     KC_ESCAPE,      KC_A,           KC_R,           KC_S,           KC_T,           KC_G,                                           KC_M,           KC_N,           KC_E,           KC_I,           KC_O,           KC_ENTER,
     KC_LEFT_SHIFT,  MT(MOD_LSFT, KC_Z),KC_X,        KC_C,           KC_D,           KC_V,                                           KC_K,           KC_H,           KC_COMMA,       KC_DOT,         KC_SLASH,       MT(MOD_RSFT, KC_QUOTE),
-    KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    TO(MOUSE),      KC_LEFT_ALT,    QK_REP,                                         KC_RIGHT_CTRL,  LEADER,        KC_LEFT,        KC_UP,          KC_DOWN,        KC_RIGHT,
+    KC_LEFT_CTRL,   KC_LEFT_ALT,    KC_LEFT_GUI,    TO(MOUSE),      KC_LEFT_ALT,    QK_REP,                                         TICK_TICK_QUCIKADD,  LEADER,        KC_LEFT,        KC_UP,          KC_DOWN,        KC_RIGHT,
                                                     MO(LOWER),      KC_SPACE,                               LT(MOVEMENT, KC_BSPC),  MO(RAISED)
   ),
   // Lower
@@ -79,11 +80,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,        _______,        _______,        _______,        _______,        _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
                                                     _______,        _______,                                       _______,         _______
   ),
-  // Movement
+  // // Movement
+  // [MOVEMENT] = LAYOUT_voyager(
+  //   _______,       _______,         _______,        _______,        _______,        _______,                                        _______,        _______,        _______,        LCTL(LSFT(KC_T)),_______,       _______,
+  //   _______,       _______,         SW_WIN,         LALT(KC_LEFT),  LALT(KC_RIGHT), _______,                                        _______,        LCTL(LSFT(KC_TAB)),LCTL(KC_TAB),LCTL(KC_T),     LCTL(KC_W),     _______,
+  //   _______,       _______,         _______,        LALT(KC_DOWN),  LALT(KC_UP),    _______,                                        _______,        LALT(KC_1),     LALT(KC_2),     LALT(KC_3),     LALT(KC_4),     LALT(KC_5),
+  //   _______,       _______,         _______,        _______,        _______,        _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
+  //                                                   _______,        _______,                                       _______,         _______
+  // ),
+  // Movement Linux
   [MOVEMENT] = LAYOUT_voyager(
-    _______,       _______,         _______,        _______,        _______,        _______,                                        _______,        _______,        _______,        LCTL(LSFT(KC_T)),_______,       _______,
-    _______,       _______,         SW_WIN,         LALT(KC_LEFT),  LALT(KC_RIGHT), _______,                                        _______,        LCTL(LSFT(KC_TAB)),LCTL(KC_TAB),LCTL(KC_T),     LCTL(KC_W),     _______,
-    _______,       _______,         _______,        LALT(KC_DOWN),  LALT(KC_UP),    _______,                                        _______,        LALT(KC_1),     LALT(KC_2),     LALT(KC_3),     LALT(KC_4),     LALT(KC_5),
+    _______,       _______,         _______,        KC_LGUI(LCTL(KC_LEFT)),        KC_LGUI(LCTL(KC_RIGHT)),        _______,                                        _______,        _______,        _______,        LCTL(LSFT(KC_T)),_______,       _______,
+    _______,       KC_LGUI(KC_Q),         FULLSCREEN_OR_WIN,         KC_LGUI(KC_LEFT),  KC_LGUI(KC_RIGHT), _______,                                        _______,        LCTL(LSFT(KC_TAB)),LCTL(KC_TAB),LCTL(KC_T),     LCTL(KC_W),     _______,
+    KC_LGUI(KC_5),       KC_LGUI(KC_4),         KC_LGUI(KC_3),        KC_LGUI(KC_2),  KG_LGUI(KC_1),    _______,                                        _______,        LALT(KC_1),     LALT(KC_2),     LALT(KC_3),     LALT(KC_4),     LALT(KC_5),
     _______,       _______,         _______,        _______,        _______,        _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
                                                     _______,        _______,                                       _______,         _______
   ),
@@ -91,17 +100,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [OBSIDIAN] = LAYOUT_voyager(
     _______,       _______,         _______,        OBSIDIAN_ARCHIVE_BOOK,OBSIDIAN_NEW_NOTE_SELECTED, _______,                      _______,        OBSIDIAN_MODE_SWAP,_______,     _______,        _______,        _______,
     _______,       _______,         _______,        OBSIDIAN_LIT_NOTE,OBSIDIAN_NEW_NOTE,OBSIDIAN_TEMPLATE,                          OBSIDIAN_QUICKADD,OBSIDIAN_CALLOUT, OBSIDIAN_ADVANCED_TABLES,_______,_______,   _______,
-    _______,       _______,         _______,        _______,       OBSIDIAN_WEB_SNIPPER,_______,                                    _______,        TOGGLE_SPACE_DASH,OBSIDIAN_JUMPT_CURSOR,     _______,_______,   _______,
-    _______,       _______,         _______,        _______,       _______,         _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
-                                                    _______,       _______,                                        _______,         _______
-  ),
-  // Game
-  [GAME] = LAYOUT_voyager(
-    KC_TAB,        _______,         _______,        _______,       _______,         _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
-    KC_ESCAPE,     _______,         _______,        _______,       _______,         _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
-    KC_LEFT_SHIFT, _______,         _______,        _______,       _______,         _______,                                        _______,        _______,        _______,        _______,        _______,        _______,
-    KC_LEFT_CTRL,  _______,         _______,        KC_F3,         _______,         SW_WIN,                                         _______,        _______,        _______,        _______,        _______,        KC_QUOTE,
-                                                    MO(NUMPAD),  KC_SPACE,                                       EXIT_GAME,       MO(MOVEMENT)
+    _______,       _______,         _______,        _______,       TICK_TICK_QUCIKADD,_______,                                    _______,        TOGGLE_SPACE_DASH,OBSIDIAN_JUMPT_CURSOR,     _______,_______,   _______,
+    _______,       _______,         _______,        _______,       _______,         _______,                                        _______,        TO(BASE),        _______,        _______,        _______,        _______,
+                                                    _______,       _______,                                        TO(BASE),         _______
   ),
   // Numpad
   [NUMPAD] = LAYOUT_voyager(
@@ -137,17 +138,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-void enter_game(void) {
-    layer_move(GAME);
-    autocorrect_disable();
-    sentence_case_off();
-    turn_space_dash_off();
-    caps_word_off();
-    turn_title_case_off();
-    STATUS_LED_1(false);
-    STATUS_LED_2(false);
-}
-
 void reset(void) {
     autocorrect_enable();
     sentence_case_on();
@@ -160,43 +150,28 @@ void reset(void) {
     STATUS_LED_4(false);
 }
 
-void exit_game(void) {
-    reset();
-    layer_move(BASE);
-}
+// enum complex_combos {
+//     TOGGLE_AUTOCORRECT,
+// };
 
-enum complex_combos {
-    ENTER_GAME = 2,
-    TOGGLE_AUTOCORRECT,
-};
-
-const uint16_t PROGMEM obsidian_combo[]           = {KC_SPACE, LT(MOVEMENT, KC_BSPC), COMBO_END};
-const uint16_t PROGMEM game_enter_combo[]         = {KC_BSPC, KC_ENTER, COMBO_END};
-const uint16_t PROGMEM qwerty_enter_combo[]       = {MT(MOD_RSFT, KC_QUOTE), KC_BSPC, COMBO_END};
-const uint16_t PROGMEM toggle_autocorrect_combo[] = {KC_BACKSPACE, KC_RIGHT, COMBO_END};
+const uint16_t PROGMEM obsidian_combo[] = {KC_SPACE, LT(MOVEMENT, KC_BSPC), COMBO_END};
+// const uint16_t PROGMEM toggle_autocorrect_combo[] = {KC_BACKSPACE, KC_RIGHT, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(obsidian_combo, OSL(OBSIDIAN)),
-    COMBO(qwerty_enter_combo, TO(QWERTY)),
-    [ENTER_GAME]         = COMBO_ACTION(game_enter_combo),
-    [TOGGLE_AUTOCORRECT] = COMBO_ACTION(toggle_autocorrect_combo),
+    // [TOGGLE_AUTOCORRECT] = COMBO_ACTION(toggle_autocorrect_combo),
 };
 
-void process_combo_event(uint16_t combo_index, bool pressed) {
-    switch (combo_index) {
-        case TOGGLE_AUTOCORRECT:
-            if (pressed) {
-                autocorrect_toggle();
-                STATUS_LED_1(autocorrect_is_enabled());
-            }
-            break;
-        case ENTER_GAME:
-            if (pressed) {
-                enter_game();
-            }
-            break;
-    }
-}
+// void process_combo_event(uint16_t combo_index, bool pressed) {
+//     switch (combo_index) {
+//         case TOGGLE_AUTOCORRECT:
+//             if (pressed) {
+//                 autocorrect_toggle();
+//                 STATUS_LED_1(autocorrect_is_enabled());
+//             }
+//             break;
+//     }
+// }
 
 void *leader_start_func(uint16_t keycode) {
     switch (keycode) {
@@ -232,9 +207,9 @@ void *leader_start_func(uint16_t keycode) {
             // Toggle space dash
             toggle_space_dash();
             return NULL;
-        case KC_G:
-            // enter game layer
-            enter_game();
+        case KC_O:
+            layer_move(OBSIDIAN);
+            // Toggle space dash
             return NULL;
         case KC_R:
             // reset
@@ -251,7 +226,7 @@ void *leader_start_func(uint16_t keycode) {
 //         autocorrect_toggle();
 //         STATUS_LED_1(autocorrect_is_enabled());
 //     } else if (leader_sequence_one_key(KC_G)) {
-//         // Enter game layer
+//         // Enter name layer
 //         enter_game();
 //     } else if (leader_sequence_one_key(KC_Q)) {
 //         // Make a new line for a quote
@@ -302,11 +277,10 @@ const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
 
     [RAISED] = { {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {131,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
-    [MOVEMENT] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
+    // [MOVEMENT] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
+    [MOVEMENT] = { {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
-    [OBSIDIAN] = { {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
-
-    [GAME] = { {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255}, {41,255,255} },
+    [OBSIDIAN] = { {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {188,255,255}, {188,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {124,100,252}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {124,100,252}, {0,0,0} },
 
     [NUMPAD] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {74,255,255}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {74,255,255}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
@@ -422,15 +396,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_mouse_turbo_click(keycode, record, TURBO)) {
         return false;
     }
-    update_swapper(&sw_win_active, KC_LALT, KC_TAB, SW_WIN, keycode, record);
+    if (detected_host_os() != OS_LINUX) {
+        update_swapper(&sw_win_active, KC_LALT, KC_TAB, FULLSCREEN_OR_WIN, keycode, record);
+    }
 
     if (record->event.pressed) {
         switch (keycode) {
             case RGB_SLD:
                 rgblight_mode(1);
-                return false;
-            case EXIT_GAME:
-                exit_game();
                 return false;
             case TOGGLE_SPACE_DASH:
                 toggle_space_dash();
@@ -439,6 +412,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (!is_leading()) {
                     start_leading();
                 }
+                return false;
+            case FULLSCREEN_OR_WIN:
+                if (detected_host_os() == OS_LINUX) {
+                  SEND_STRING(SS_TAP(KC_LGUI(KC_C)))
+                  SEND_STRING(SS_TAP(KC_LGUI(KC_LCTL((KC_F))))
+                }
+                return false;
+            case OBSIDIAN_TEMPLATE:
+            case OBSIDIAN_NEW_NOTE:
+            case OBSIDIAN_NEW_NOTE_SELECTED:
+            case OBSIDIAN_LIT_NOTE:
+            case OBSIDIAN_ARCHIVE_BOOK:
+            case OBSIDIAN_QUICKADD:
+            case OBSIDIAN_CALLOUT:
+            case OBSIDIAN_MODE_SWAP:
+            case OBSIDIAN_ADVANCED_TABLES:
+            case OBSIDIAN_JUMPT_CURSOR:
+            case TICK_TICK_QUCIKADD:
+                if (IS_LAYER_ON(OBSIDIAN)) {
+                    layer_move(BASE);
+                }
+                tap_code16(keycode);
                 return false;
         }
     }
