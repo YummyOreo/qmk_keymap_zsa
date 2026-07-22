@@ -17,7 +17,6 @@ void i2c_reset(void) {
     chThdSleepMilliseconds(10);
     i2c_init();
 }
-#endif
 #pragma GCC push_options
 #pragma GCC optimize("-O3")
 
